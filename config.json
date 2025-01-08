@@ -2,5 +2,7 @@
     "title":"The Curious Path",
     "subTitle":"好奇的探索之路",
     "avatarUrl":"https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&d=identicon&r=g",
-    "GMEEK_VERSION":"last"
+    "GMEEK_VERSION":"last",
+    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>",
+    "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>"
 }
