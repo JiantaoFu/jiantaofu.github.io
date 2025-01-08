@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Curious Path</title><link>https://jiantaofu.github.io</link><description>好奇的探索之路</description><copyright>The Curious Path</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&amp;d=identicon&amp;r=g</url><title>avatar</title><link>https://jiantaofu.github.io</link></image><lastBuildDate>Wed, 08 Jan 2025 23:09:48 +0000</lastBuildDate><managingEditor>The Curious Path</managingEditor><ttl>60</ttl><webMaster>The Curious Path</webMaster><item><title>Mr. Resume: AI Resume writer</title><link>https://jiantaofu.github.io/post/Mr.%20Resume-%20AI%20Resume%20writer.html</link><description>An prompt that helps on resume writing, thanks [Mr.-Ranedeer-AI-Tutor](https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor), the prompt is available at https://github.com/MrResume/ResumeBoost/.&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Curious Path</title><link>https://jiantaofu.github.io</link><description>好奇的探索之路</description><copyright>The Curious Path</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&amp;d=identicon&amp;r=g</url><title>avatar</title><link>https://jiantaofu.github.io</link></image><lastBuildDate>Wed, 08 Jan 2025 23:19:15 +0000</lastBuildDate><managingEditor>The Curious Path</managingEditor><ttl>60</ttl><webMaster>The Curious Path</webMaster><item><title>Mr. Resume: AI Resume writer</title><link>https://jiantaofu.github.io/post/Mr.%20Resume-%20AI%20Resume%20writer.html</link><description>An prompt that helps on resume writing, thanks [Mr.-Ranedeer-AI-Tutor](https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor), the prompt is available at https://github.com/MrResume/ResumeBoost/.&#13;
 &#13;
 The basic idea is to customize your resume according to a specific job description assisted with an AI resume writer, built this last year and made a landing page for that, there could be some potential to build a business around this idea.&#13;
 &#13;
 Just watched two YouTube videos related to this, very inspiring:&#13;
 &#13;
-`Gmeek-html&lt;iframe src='https://youtu.be/n5Th-dOI3rI?si=1ylV7N0On-Z1ueBO'&gt;&lt;/iframe&gt;`&#13;
+`Gmeek-html&lt;iframe width='560' height='315' src='https://www.youtube.com/embed/n5Th-dOI3rI?si=zwi7ftcYA7f26juS' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' referrerpolicy='strict-origin-when-cross-origin' allowfullscreen&gt;&lt;/iframe&gt;`&#13;
 &#13;
-`Gmeek-html&lt;iframe src='https://youtu.be/G4nsGvL4Fo0?si=c5uagevc5UKPu8Cs'&gt;&lt;/iframe&gt;`&#13;
+&#13;
+`Gmeek-html&lt;iframe width='560' height='315' src='https://www.youtube.com/embed/G4nsGvL4Fo0?si=r3mQXGNEnDIcILSx' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' referrerpolicy='strict-origin-when-cross-origin' allowfullscreen&gt;&lt;/iframe&gt;`&#13;
 &#13;
 # ResumeBoost&#13;
 &#13;

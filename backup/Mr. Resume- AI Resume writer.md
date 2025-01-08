@@ -4,9 +4,10 @@ The basic idea is to customize your resume according to a specific job descripti
 
 Just watched two YouTube videos related to this, very inspiring:
 
-`Gmeek-html<iframe src="https://youtu.be/n5Th-dOI3rI?si=1ylV7N0On-Z1ueBO"></iframe>`
+`Gmeek-html<iframe width="560" height="315" src="https://www.youtube.com/embed/n5Th-dOI3rI?si=zwi7ftcYA7f26juS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
 
-`Gmeek-html<iframe src="https://youtu.be/G4nsGvL4Fo0?si=c5uagevc5UKPu8Cs"></iframe>`
+
+`Gmeek-html<iframe width="560" height="315" src="https://www.youtube.com/embed/G4nsGvL4Fo0?si=r3mQXGNEnDIcILSx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
 
 # ResumeBoost
 
