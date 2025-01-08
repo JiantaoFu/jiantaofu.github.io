@@ -1,2 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Curious Path</title><link>https://jiantaofu.github.io</link><description>好奇的探索之路</description><copyright>The Curious Path</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&amp;d=identicon&amp;r=g</url><title>avatar</title><link>https://jiantaofu.github.io</link></image><lastBuildDate>Wed, 08 Jan 2025 00:35:42 +0000</lastBuildDate><managingEditor>The Curious Path</managingEditor><ttl>60</ttl><webMaster>The Curious Path</webMaster><item><title>The Pragmatic Programmer读后感</title><link>https://jiantaofu.github.io/post/The%20Pragmatic%20Programmer-du-hou-gan.html</link><description>这本书的副标题是From Journeyman to Master，中文翻译过来是”从小工到专家”，工作了近十年，回过头来再看这本书，发现这本书虽然从出版到现在已经近20年了，正如作者在09年的再版序言里说的:”Things Really Haven’t Changed That Much”，又一个十年过去了，书中的最佳实践放倒今天依然适用。</description><guid isPermaLink="true">https://jiantaofu.github.io/post/The%20Pragmatic%20Programmer-du-hou-gan.html</guid><pubDate>Wed, 08 Jan 2025 00:11:47 +0000</pubDate></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Curious Path</title><link>https://jiantaofu.github.io</link><description>好奇的探索之路</description><copyright>The Curious Path</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&amp;d=identicon&amp;r=g</url><title>avatar</title><link>https://jiantaofu.github.io</link></image><lastBuildDate>Wed, 08 Jan 2025 00:56:31 +0000</lastBuildDate><managingEditor>The Curious Path</managingEditor><ttl>60</ttl><webMaster>The Curious Path</webMaster><item><title>吉他和弦基础理论</title><link>https://jiantaofu.github.io/post/ji-ta-he-xian-ji-chu-li-lun.html</link><description>## 音符&#13;
+&#13;
+音乐有12个音符(Note)，每个音符之间隔一个半音，比如B和C之间就隔一个半音(H)，A和B之间隔一个全音(W, 即两个半音):&#13;
+&#13;
+ A   |  A&amp;#9839;/B&amp;#9837;  |  B  |  C  |  C&amp;#9839;/D&amp;#9837;  |  D  | D&amp;#9839;/E&amp;#9837;  |  E  |  F  |  F&amp;#9839;/G&amp;#9837;  |  G  |  G&amp;#9839;/A&amp;#9837;&#13;
+:---:|:-------------------:|:---:|:---:|:-------------------:|:---:|:------------------:|:---:|:---:|:-------------------:|:---:|:------------------:&#13;
+ 1   |      2              |  3  |  4  |              5      |  6  |          7         |  8  |  9  |          10         |  11 |         12&#13;
+ &#13;
+ 音符在吉他上的位置，从左到右对应0-12个音格(Fred)，从上到下对应1-6弦：&#13;
+ &#13;
+0 |  1   |      2              |  3  |  4  |              5      |  6  |          7         |  8  |  9  |          10         |  11 &#13;
+:---:|:-------------------:|:---:|:---:|:-------------------:|:---:|:------------------:|:---:|:---:|:-------------------:|:---:|:------------------:&#13;
+E | F | F&amp;#9839;/G&amp;#9837; | G | G&amp;#9839;/A&amp;#9837; | A | A&amp;#9839;/B&amp;#9837; | B | C | C&amp;#9839;/D&amp;#9837; | D | D&amp;#9839;/E&amp;#9837; &#13;
+B | C | C&amp;#9839;/D&amp;#9837; | D | D&amp;#9839;/E&amp;#9837; | E | F | F&amp;#9839;/G&amp;#9837; | G | G&amp;#9839;/A&amp;#9837; | A | A&amp;#9839;/B&amp;#9837; &#13;
+G | G&amp;#9839;/A&amp;#9837; | A | A&amp;#9839;/B&amp;#9837; | B | C | C&amp;#9839;/D&amp;#9837; | D | D&amp;#9839;/E&amp;#9837; | E | F | F&amp;#9839;/G&amp;#9837; &#13;
+D | D&amp;#9839;/E&amp;#9837; | E | F | F&amp;#9839;/G&amp;#9837; | G | G&amp;#9839;/A&amp;#9837; | A | A&amp;#9839;/B&amp;#9837; | B | C | C&amp;#9839;/D&amp;#9837; &#13;
+A | A&amp;#9839;/B&amp;#9837;  | B | C | C&amp;#9839;/D&amp;#9837; | D | D&amp;#9839;/E&amp;#9837; | E | F | F&amp;#9839;/G&amp;#9837; | G | G&amp;#9839;/A&amp;#9837;&#13;
+E | F | F&amp;#9839;/G&amp;#9837; | G | G&amp;#9839;/A&amp;#9837; | A | A&amp;#9839;/B&amp;#9837; | B | C | C&amp;#9839;/D&amp;#9837; | D | D&amp;#9839;/E&amp;#9837; &#13;
+&#13;
+## 音阶(Scale)&#13;
+&#13;
+常见的有大调音阶和小调音阶，它们的区别在于全音(W)和半音(H)的排列顺序不同，而这种不同的顺序会带来不同的风格。</description><guid isPermaLink="true">https://jiantaofu.github.io/post/ji-ta-he-xian-ji-chu-li-lun.html</guid><pubDate>Wed, 08 Jan 2025 00:52:08 +0000</pubDate></item><item><title>The Pragmatic Programmer读后感</title><link>https://jiantaofu.github.io/post/The%20Pragmatic%20Programmer-du-hou-gan.html</link><description>这本书的副标题是From Journeyman to Master，中文翻译过来是”从小工到专家”，工作了近十年，回过头来再看这本书，发现这本书虽然从出版到现在已经近20年了，正如作者在09年的再版序言里说的:”Things Really Haven’t Changed That Much”，又一个十年过去了，书中的最佳实践放倒今天依然适用。</description><guid isPermaLink="true">https://jiantaofu.github.io/post/The%20Pragmatic%20Programmer-du-hou-gan.html</guid><pubDate>Wed, 08 Jan 2025 00:11:47 +0000</pubDate></item></channel></rss>
