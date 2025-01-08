@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>
+    <link rel="icon" href="https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&d=identicon&r=g"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="Bigbluebutton CEO Fred Dixon曾说过：”创建一个成功的公司不容易，但同时创建一个成功的公司，成功的开源项目和成功的生态系统就是难上加难了。">
+<meta property="og:title" content="BigBlueButton的开源商业模式">
+<meta property="og:description" content="Bigbluebutton CEO Fred Dixon曾说过：”创建一个成功的公司不容易，但同时创建一个成功的公司，成功的开源项目和成功的生态系统就是难上加难了。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jiantaofu.github.io/post/BigBlueButton-de-kai-yuan-shang-ye-mo-shi.html">
+<meta property="og:image" content="https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&d=identicon&r=g">
+<title>BigBlueButton的开源商业模式</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">BigBlueButton的开源商业模式</h1>
+<div class="title-right">
+    <a href="https://jiantaofu.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/JiantaoFu/jiantaofu.github.io/issues/5" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>Bigbluebutton CEO Fred Dixon曾说过：”创建一个成功的公司不容易，但同时创建一个成功的公司，成功的开源项目和成功的生态系统就是难上加难了。“.</p>
+<p>Bigbluebutton项目的背后就有这个Blindside networks这样一家公司，这家公司主要是提供收费的Bigbluebutton相关的技术支持和咨询服务。Fred的理想很远大，但要实现这个理想，前提是必须有一个成功的开源项目，否则是不可能有任何的公司能在这个生态系统上存活，企业家们往往会有远大的理想，认定自己做的会是”the next big thing”，但他们也会活在当下，确保有着可行的商业模式和充足的现金流。Blindside network也是这样，提供优秀的开源会议系统的解决方案，靠提供商业付费技术支持来提供现金流，并逐渐提供一些私有的辅助产品和服务，但作为一个开源项目的支持者，也需要平衡商业活动和社区活动。如果一个开源项目成功了，它会拥有非常多的用户和开发者，并且会成为一个很健康的生态系统，反过来也会促进开源项目的发展，并且为开源项目的支持公司提供更多的商业机会。</p>
+<p>如果想以Open Source Business方式去运营一家公司，必然会面对如下的一些问题：</p>
+<ol>
+<li>
+<p>主导一个能解决实际问题的开源项目。</p>
+</li>
+<li>
+<p>为项目营造一个健康的生态系统，吸引其他人为项目做贡献，包括用户和开发者等。</p>
+</li>
+<li>
+<p>构建一个可行的商业模式来支撑生态系统的运作，其他的开发者也可以采用同样的商业模式去盈利，这样就可以吸引更多的开发者加入。</p>
+</li>
+</ol>
+<p>以这种方式去运作有两个层面，一个是商业的运营，另一个是社区的运营。</p>
+<h1>商业的运营有如下需要注意的：</h1>
+<ol>
+<li>
+<p>关注细分市场。可以看到Bigbluebutton的主页上很清楚的写明了，这个项目是为了解决远程教育的问题，虽然大家都知道其实bigbluebutton就是一个开源的视频会议解决方案，也有很多的公司找到Blindside network并不是为了解决远程教育。他们这样做主要是出于两方面的考虑，首先集中精力在细分市场容易满足这类特定客户的需求，容易形成口碑（具体参考“cross the chasm”），在这类客户基础上再去发展另外的客户；其次，留下来的空缺市场也利于整个生态系统的发展，为其他公司提供了机会。不求唯一，只求最好。</p>
+</li>
+<li>
+<p>为开源项目提供一流的社区支持。这个看似和提供付费的商业技术支持相矛盾，但实际上，开源项目的成功在于其普及的应用，而这个也就需要用户能够很方便的去试用和测试。越普及，那么用户越多，越有更多的机会去接触潜在的客户。这个就好比如果你想有橘子大丰收，就必须先去播种，去种树一样。</p>
+</li>
+<li>
+<p>公开你的商业模式。你必须清楚的让客户知道你卖的是什么（服务），能提供给他们什么（快速的部署，减少使用开源软件的风险等）。</p>
+</li>
+<li>
+<p>清楚哪些事情不会做。之前很多人在邮件列表里面要求替换bigbluebutton的logo，这样做就删除了对开源项目的引用，不利于开源项目的普及和推广，并且还相当于浪费社区成员的时间做一些不利于社区发展的事情，之后核心开发者在邮件列表里面公开声明不再提供类似的技术支持。但他们并不反对用户替换logo，也不反对其他的商业公司提供类似的技术支持。</p>
+</li>
+<li>
+<p>雇佣一个好的设计师。Google在创建的初期因为没有设计师，只能做一个很简单的主页，之后这种简洁变成了他们的品牌。Bigbluebutton也类似，项目组的成员都不懂设计，项目主页和bigbluebutton客户端也都很简洁。但实际上，公司的创始人的组合最好有如下三类技能：开发，销售和设计。如果看看其他的startup，如heroku或者github，很明显他们有优秀的设计师。如果我们当初能有设计师能帮忙，那么应该会有一个更有视觉冲击力的logo(而不是现在的一个b)。</p>
+</li>
+<li>
+<p>通过合适的问题来鉴别潜在的客户。有很多人会打电话或者发邮件来咨询，但并非每个人都能成为你的客户，因此你需要一种方法来鉴别到底哪些人最有可能成为你的客户。Blindside networks总结出一套方法，通过问一些问题来寻求答案：</p>
+</li>
+</ol>
+<p>1） 之前有没有和其他的开源服务提供商合作的经验？</p>
+<p>如果有那么最好，如果没有，那么要看他们是不是认为开源软件等同于廉价的技术支持和服务，如果是，往往他们使用bigbluebutton并没有商业模式的支撑，即他们并不会盈利，这样他们应该去寻求一些社区的支持。</p>
+<p>2） 使用Bigbluebutton的商业模式是什么样的？</p>
+<p>如果是基于成本消减（cost reduction)，那是最好的，意味着他们能接受短期内的支出来换取长期的成本节约。如果是营收产生（Revenue generation)，也要分情况，如果是基于bigbluebutton可以直接盈利，那么最好，但如果是先集成到现有产品，但依赖以后用户群的增长来盈利的，那么每次额外技术支持所产生的费用往往被认为不划算，毕竟人家还没有盈利。</p>
+<p>3） 之前接受专业服务的收费情况如何？</p>
+<p>这个主要是看他们是否能够承受价格，如果客户常和印度公司合作，那么他们的付费一般不会高。如果是这样，建议他们花更多的精力去弄清楚使用bigbluebutton怎么才能有更多的营收，这样能降低他们投入的风险。</p>
+<h1>开源项目运营需要注意的：</h1>
+<ol>
+<li>
+<p>每次的版本发布都当作一个产品发布。应为每个版本发布，都会有大量的用户使用（包括付费用户），而不仅仅是开发者，如果仅仅是开发者。所以会牺牲一些开发新特性的时间来换取更稳定的版本，每个版本发布前，会留至少4周的时间来做测试并解决问题。只有这样，产品才能被广泛使用。</p>
+</li>
+<li>
+<p>以开发者的身份参加社区讨论。虽然公司要盈利，但作为开发者的身份加入社区讨论，去解决问题，获取更多的想法，对开源社区的发展是很有帮助的。</p>
+</li>
+<li>
+<p>尽早的确定使用哪种开源许可证。Bigbluebutton采用LGPL开放源码。但最开始并不是使用的这种，因为最开始整合了Xuggler，就使用了和Xuggler一样的AGPL，AGPL要求即便产品提供运营的服务也需要开放源码，而LGPL允许商业软件通过类库引用(link)方式使用LGPL类库而不需要开源商业软件的代码。AGPL限制了其他的公司使用bigbluebutton，不利于开源社区的发展。</p>
+</li>
+<li>
+<p>一开始就要提供FAQ。最开始的时候，看到有用户渐渐多了，和想每个问题都亲自回答并解决，但渐渐人多了，精力就不够了，有了FAQ，在解决用户疑问的同时，自己也省事。</p>
+</li>
+</ol></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://jiantaofu.github.io">The Curious Path</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","JiantaoFu/jiantaofu.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
+
+</html>
