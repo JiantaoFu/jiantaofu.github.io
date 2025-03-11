@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>
+    <link rel="icon" href="https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&d=identicon&r=g"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# Install Squid
+
+Use Linux machine to install squid
+```
+sudo apt update
+sudo apt install squid
+```
+
+Config squid, change '/etc/squid/squid.conf' and allow all traffic
+
+```
+# And finally deny all other access to this proxy
+#http_access deny all
+http_access allow all
+```
+
+Restart squid:
+
+```
+sudo systemctl restart squid
+```
+
+Verify squid works (10.231.249.222 is the ip address of the machine):
+
+```
+curl -x http://10.231.249.222:3128 https://myip.ipip.net
+```
+
+# Install Hitch
+
+Then install Hitch, old version may not support MTLS, so just grab the latest one:
+
+```
+wget https://hitch-tls.org/source/hitch-1.8.0.tar.gz
+tar zxvf hitch-1.8.0.tar.gz
+sudo apt-get install libev-dev libssl-dev automake python3-docutils flex bison pkg-config make -y
+cd hitch-1.8.0
+./configure;make;sudo make install
+```
+
+Create Hitch Config '/etc/hitch/hitch.conf' as below:
+
+```
+frontend = {
+    host = '*'
+    port = '8443'
+}
+backend = '[127.0.0.1]:3128'    # 6086 is the default Varnish PROXY port.
+workers = 4                     # number of CPU cores
+
+daemon = off
+
+# We strongly recommend you create a separate non-privileged hitch
+# user and group
+user = 'hitch'
+group = 'hitch'
+
+# Enable to let clients negotiate HTTP/2 with ALPN. (default off)
+# alpn-protos = 'h2, http/1.1'
+
+# run Varnish as backend over PROXY; varnishd -a :80 -a localhost:6086,PROXY ..
+# write-proxy-v2 = on               # Write PROXY header
+
+# Only support strong ciphers and TLSv1.2, TLSv1.3
+tls-protos = TLSv1.2 TLSv1.3
+ciphers = 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:!aNULL:!eNULL:!EXPORT:!LOW:!MD5:!DES:!3DES:!RC2:!RC4:!PSK:!kDH'
+
+syslog = on
+log-level = 2
+
+# The path to the combined server certificate and its private key.
+pem-file = '/etc/hitch/cert/server.pem'
+```
+
+Create user 'hitch':
+sudo useradd -r -U -s /bin/false hitch
+
+# Test TLS
+
+Create server certificate and private key:
+
+```
+mkdir cert
+cd cert
+openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt -subj '/CN=yourdomain.com' -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf '\n[SAN]\nsubjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com'))
+cat server.key server.crt > server.pem
+sudo mkdir -p /etc/hitch/cert
+sudo cp server.pem /etc/hitch/cert/
+```
+
+Add domain name in '/etc/hosts':
+
+```
+10.231.249.222 www.yourdomain.com
+```
+
+Add the Self-Signed Certificate to the Trust Store:
+
+```
+sudo cp server.crt /usr/local/share/ca-certificates/my-self-signed.crt
+sudo update-ca-certificates
+```
+
+Run Hitch:
+
+```
+/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+```
+
+Test with curl:
+
+```
+curl -x https://www.yourdomain.com:8443 https://myip.ipip.net
+```
+
+# Test MTLS
+
+Create the 'client.ext' file with the following content:
+
+```
+# client.ext
+basicConstraints=CA:FALSE
+nsCertType=client
+nsComment='OpenSSL Generated Client Certificate'
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer:always
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=clientAuth
+```
+
+Create client certificate and private key:
+
+```
+openssl genrsa -out ca.key 2048
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt
+
+sudo cp ca.crt /etc/hitch/cert/
+```
+
+Now add the following content in '/etc/hitch/hitch.conf' to enable MTLS on Hitch
+
+```
+# This forces clients to present a valid client certificate.
+client-verify = required
+
+# Client certificate authority file used to verify client certificates for mTLS.
+client-verify-ca = '/etc/hitch/cert/ca.crt'
+```
+
+Now run Hitch
+
+```
+/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+```
+
+Verify MTLS setup with curl
+
+```
+      MTLS           TLS           TLS
+curl -------> Hitch ------> Squid -----> Dst
+```
+
+```
+curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443  https://myip.ipip.net
+```
+
+> [!NOTE]
+> Should be noticed that currently only tls3 can be used in this case, https://github.com/curl/curl/issues/12286, so it's hard to verify from wireshark, since all certificate exchanges are encrypted after the TLS handshake. But we have Hitch configured to require MTLS, so if it succeeds, it should be using MTLS.
+
+# Enable Proxy Protocol
+
+The PROXY protocol was designed to help carry connection information from the source requesting side through a proxy server to the destination, especially when network address translation (NAT) is involved. It provides a way to preserve the original end-user IP addresses and TCP/UDP port numbers when traffic is routed through proxies and load balancers. The information is typically added to the header of the request forwarded to the destination server.
+
+There are two versions of the PROXY protocol: V1 and V2.
+- V1 is human-readable ASCII, V2 is binary.
+- V1 headers are simpler but more verbose, V2 headers are more flexible and can carry additional information using TLV (Type-Length-Value) vectors..
+- V2 can support protocols other than TCP, e.g., UDP.
+It needs to be enabled at both Squid and Hitch.
+Add the following in '/etc/hitch/hitch.conf':
+
+```
+proxy-proxy = on
+```
+
+Change 'http_port 3128' in '/etc/squid/squid.conf':
+
+```
+http_port 3128 require-proxy-header
+proxy_protocol_access allow localnet
+
+# following one is needed when testing on the same machine
+acl localnet src 127.0.0.1
+```
+
+Verify MTLS setup with curl
+
+```
+curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443 --haproxy-protocol https://myip.ipip.net
+```
+
+# Cert and Key
+
+Here's the step-by-step process for creating a set of certificates to be used for MTLS, including the CA certificate and key, server certificate and key, and client certificate and key. Please replace 'Your CA Name', 'yourdomain.com', and 'Your Server Name' with your actual CA, domain, and server names.
+
+## Step 1: Generate the CA's Private Key
+
+```
+openssl genrsa -out ca.key 4096
+```
+
+This creates a new 4096-bit RSA private key for your CA. The key will be stored in ca.key.
+
+## Step 2: Generate the Self-Signed Root CA Certificate
+
+```
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -subj '/CN=Your CA Name'
+```
+
+This command generates a new self-signed CA certificate based on the private key (ca.key) you created. The -days 3650 makes the certificate valid for 10 years. The certificate will be stored in ca.crt.
+
+## Step 3: Generate the Server's Private Key
+
+```
+openssl genrsa -out server.key 2048
+```
+
+Generate a new 2048-bit RSA private key for your server. The key will be stored in server.key.
+
+## Step 4: Create a Certificate Signing Request (CSR) for the Server
+
+```
+openssl req -new -key server.key -out server.csr -subj '/CN=www.yourdomain.com'
+```
+
+This creates a new CSR (server.csr) for your server certificate using the server's private key (server.key).
+
+## Step 5: Generate the Server Certificate Signed by Your CA
+
+```
+openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
+```
+
+This signs the server CSR with your CA key, resulting in a signed server certificate (server.crt) valid for 1 year.
+
+## Step 6: Generate the Client's Private Key
+
+```
+openssl genrsa -out client.key 2048
+```
+
+Generate a new 2048-bit RSA private key for the client. This key will be stored in client.key.
+
+## Step 7: Create a CSR for the Client
+
+```
+openssl req -new -key client.key -out client.csr -subj '/CN=Your Client Name'
+```
+
+Create a CSR (client.csr) for the client using the newly created client key (client.key).
+
+## Step 8: Generate the Client Certificate Signed by Your CA
+
+```
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt
+```
+
+This signs the client CSR with your CA key, creating a signed client certificate (client.crt) valid for 1 year. This certificate is to be used for mutual TLS authentication by the client.
+
+## Step 9 (optional): Verify the Certificates
+
+To verify the server and client certificates were signed by your CA:
+
+```
+openssl verify -CAfile ca.crt server.crt
+openssl verify -CAfile ca.crt client.crt
+```
+
+Both commands should return OK if everything went well.
+
+Now you have:
+- CA certificate (ca.crt) installed and trusted on the server and clients.
+- Server certificate (server.crt) and private key (server.key) are installed on the server.
+- Client certificate (client.crt) and private key (client.key) are installed on the client.
+
+Make sure you protect your private keys (ca.key, server.key, client.key) by setting appropriate file permissions. Using these instructions, your server and client can mutually authenticate themselves over a TLS connection, with your own CA acting as the trust anchor.
+This content is only supported in a Feishu Docs
+
+Reference
+https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt
+https://seriousben.com/posts/2020-02-exploring-the-proxy-protocol/。">
+<meta property="og:title" content="MTLS Setup with Hitch and Squid">
+<meta property="og:description" content="# Install Squid
+
+Use Linux machine to install squid
+```
+sudo apt update
+sudo apt install squid
+```
+
+Config squid, change '/etc/squid/squid.conf' and allow all traffic
+
+```
+# And finally deny all other access to this proxy
+#http_access deny all
+http_access allow all
+```
+
+Restart squid:
+
+```
+sudo systemctl restart squid
+```
+
+Verify squid works (10.231.249.222 is the ip address of the machine):
+
+```
+curl -x http://10.231.249.222:3128 https://myip.ipip.net
+```
+
+# Install Hitch
+
+Then install Hitch, old version may not support MTLS, so just grab the latest one:
+
+```
+wget https://hitch-tls.org/source/hitch-1.8.0.tar.gz
+tar zxvf hitch-1.8.0.tar.gz
+sudo apt-get install libev-dev libssl-dev automake python3-docutils flex bison pkg-config make -y
+cd hitch-1.8.0
+./configure;make;sudo make install
+```
+
+Create Hitch Config '/etc/hitch/hitch.conf' as below:
+
+```
+frontend = {
+    host = '*'
+    port = '8443'
+}
+backend = '[127.0.0.1]:3128'    # 6086 is the default Varnish PROXY port.
+workers = 4                     # number of CPU cores
+
+daemon = off
+
+# We strongly recommend you create a separate non-privileged hitch
+# user and group
+user = 'hitch'
+group = 'hitch'
+
+# Enable to let clients negotiate HTTP/2 with ALPN. (default off)
+# alpn-protos = 'h2, http/1.1'
+
+# run Varnish as backend over PROXY; varnishd -a :80 -a localhost:6086,PROXY ..
+# write-proxy-v2 = on               # Write PROXY header
+
+# Only support strong ciphers and TLSv1.2, TLSv1.3
+tls-protos = TLSv1.2 TLSv1.3
+ciphers = 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:!aNULL:!eNULL:!EXPORT:!LOW:!MD5:!DES:!3DES:!RC2:!RC4:!PSK:!kDH'
+
+syslog = on
+log-level = 2
+
+# The path to the combined server certificate and its private key.
+pem-file = '/etc/hitch/cert/server.pem'
+```
+
+Create user 'hitch':
+sudo useradd -r -U -s /bin/false hitch
+
+# Test TLS
+
+Create server certificate and private key:
+
+```
+mkdir cert
+cd cert
+openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt -subj '/CN=yourdomain.com' -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf '\n[SAN]\nsubjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com'))
+cat server.key server.crt > server.pem
+sudo mkdir -p /etc/hitch/cert
+sudo cp server.pem /etc/hitch/cert/
+```
+
+Add domain name in '/etc/hosts':
+
+```
+10.231.249.222 www.yourdomain.com
+```
+
+Add the Self-Signed Certificate to the Trust Store:
+
+```
+sudo cp server.crt /usr/local/share/ca-certificates/my-self-signed.crt
+sudo update-ca-certificates
+```
+
+Run Hitch:
+
+```
+/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+```
+
+Test with curl:
+
+```
+curl -x https://www.yourdomain.com:8443 https://myip.ipip.net
+```
+
+# Test MTLS
+
+Create the 'client.ext' file with the following content:
+
+```
+# client.ext
+basicConstraints=CA:FALSE
+nsCertType=client
+nsComment='OpenSSL Generated Client Certificate'
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer:always
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=clientAuth
+```
+
+Create client certificate and private key:
+
+```
+openssl genrsa -out ca.key 2048
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt
+
+sudo cp ca.crt /etc/hitch/cert/
+```
+
+Now add the following content in '/etc/hitch/hitch.conf' to enable MTLS on Hitch
+
+```
+# This forces clients to present a valid client certificate.
+client-verify = required
+
+# Client certificate authority file used to verify client certificates for mTLS.
+client-verify-ca = '/etc/hitch/cert/ca.crt'
+```
+
+Now run Hitch
+
+```
+/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+```
+
+Verify MTLS setup with curl
+
+```
+      MTLS           TLS           TLS
+curl -------> Hitch ------> Squid -----> Dst
+```
+
+```
+curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443  https://myip.ipip.net
+```
+
+> [!NOTE]
+> Should be noticed that currently only tls3 can be used in this case, https://github.com/curl/curl/issues/12286, so it's hard to verify from wireshark, since all certificate exchanges are encrypted after the TLS handshake. But we have Hitch configured to require MTLS, so if it succeeds, it should be using MTLS.
+
+# Enable Proxy Protocol
+
+The PROXY protocol was designed to help carry connection information from the source requesting side through a proxy server to the destination, especially when network address translation (NAT) is involved. It provides a way to preserve the original end-user IP addresses and TCP/UDP port numbers when traffic is routed through proxies and load balancers. The information is typically added to the header of the request forwarded to the destination server.
+
+There are two versions of the PROXY protocol: V1 and V2.
+- V1 is human-readable ASCII, V2 is binary.
+- V1 headers are simpler but more verbose, V2 headers are more flexible and can carry additional information using TLV (Type-Length-Value) vectors..
+- V2 can support protocols other than TCP, e.g., UDP.
+It needs to be enabled at both Squid and Hitch.
+Add the following in '/etc/hitch/hitch.conf':
+
+```
+proxy-proxy = on
+```
+
+Change 'http_port 3128' in '/etc/squid/squid.conf':
+
+```
+http_port 3128 require-proxy-header
+proxy_protocol_access allow localnet
+
+# following one is needed when testing on the same machine
+acl localnet src 127.0.0.1
+```
+
+Verify MTLS setup with curl
+
+```
+curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443 --haproxy-protocol https://myip.ipip.net
+```
+
+# Cert and Key
+
+Here's the step-by-step process for creating a set of certificates to be used for MTLS, including the CA certificate and key, server certificate and key, and client certificate and key. Please replace 'Your CA Name', 'yourdomain.com', and 'Your Server Name' with your actual CA, domain, and server names.
+
+## Step 1: Generate the CA's Private Key
+
+```
+openssl genrsa -out ca.key 4096
+```
+
+This creates a new 4096-bit RSA private key for your CA. The key will be stored in ca.key.
+
+## Step 2: Generate the Self-Signed Root CA Certificate
+
+```
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -subj '/CN=Your CA Name'
+```
+
+This command generates a new self-signed CA certificate based on the private key (ca.key) you created. The -days 3650 makes the certificate valid for 10 years. The certificate will be stored in ca.crt.
+
+## Step 3: Generate the Server's Private Key
+
+```
+openssl genrsa -out server.key 2048
+```
+
+Generate a new 2048-bit RSA private key for your server. The key will be stored in server.key.
+
+## Step 4: Create a Certificate Signing Request (CSR) for the Server
+
+```
+openssl req -new -key server.key -out server.csr -subj '/CN=www.yourdomain.com'
+```
+
+This creates a new CSR (server.csr) for your server certificate using the server's private key (server.key).
+
+## Step 5: Generate the Server Certificate Signed by Your CA
+
+```
+openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
+```
+
+This signs the server CSR with your CA key, resulting in a signed server certificate (server.crt) valid for 1 year.
+
+## Step 6: Generate the Client's Private Key
+
+```
+openssl genrsa -out client.key 2048
+```
+
+Generate a new 2048-bit RSA private key for the client. This key will be stored in client.key.
+
+## Step 7: Create a CSR for the Client
+
+```
+openssl req -new -key client.key -out client.csr -subj '/CN=Your Client Name'
+```
+
+Create a CSR (client.csr) for the client using the newly created client key (client.key).
+
+## Step 8: Generate the Client Certificate Signed by Your CA
+
+```
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt
+```
+
+This signs the client CSR with your CA key, creating a signed client certificate (client.crt) valid for 1 year. This certificate is to be used for mutual TLS authentication by the client.
+
+## Step 9 (optional): Verify the Certificates
+
+To verify the server and client certificates were signed by your CA:
+
+```
+openssl verify -CAfile ca.crt server.crt
+openssl verify -CAfile ca.crt client.crt
+```
+
+Both commands should return OK if everything went well.
+
+Now you have:
+- CA certificate (ca.crt) installed and trusted on the server and clients.
+- Server certificate (server.crt) and private key (server.key) are installed on the server.
+- Client certificate (client.crt) and private key (client.key) are installed on the client.
+
+Make sure you protect your private keys (ca.key, server.key, client.key) by setting appropriate file permissions. Using these instructions, your server and client can mutually authenticate themselves over a TLS connection, with your own CA acting as the trust anchor.
+This content is only supported in a Feishu Docs
+
+Reference
+https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt
+https://seriousben.com/posts/2020-02-exploring-the-proxy-protocol/。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jiantaofu.github.io/post/MTLS%20Setup%20with%20Hitch%20and%20Squid.html">
+<meta property="og:image" content="https://www.gravatar.com/avatar/b2e648e70e0d3d2b8970e089ec487bc9?s=200&d=identicon&r=g">
+<title>MTLS Setup with Hitch and Squid</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style>
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">MTLS Setup with Hitch and Squid</h1>
+<div class="title-right">
+    <a href="https://jiantaofu.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/JiantaoFu/jiantaofu.github.io/issues/12" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>Install Squid</h1>
+<p>Use Linux machine to install squid</p>
+<pre class="notranslate"><code class="notranslate">sudo apt update
+sudo apt install squid
+</code></pre>
+<p>Config squid, change "/etc/squid/squid.conf" and allow all traffic</p>
+<pre class="notranslate"><code class="notranslate"># And finally deny all other access to this proxy
+#http_access deny all
+http_access allow all
+</code></pre>
+<p>Restart squid:</p>
+<pre class="notranslate"><code class="notranslate">sudo systemctl restart squid
+</code></pre>
+<p>Verify squid works (10.231.249.222 is the ip address of the machine):</p>
+<pre class="notranslate"><code class="notranslate">curl -x http://10.231.249.222:3128 https://myip.ipip.net
+</code></pre>
+<h1>Install Hitch</h1>
+<p>Then install Hitch, old version may not support MTLS, so just grab the latest one:</p>
+<pre class="notranslate"><code class="notranslate">wget https://hitch-tls.org/source/hitch-1.8.0.tar.gz
+tar zxvf hitch-1.8.0.tar.gz
+sudo apt-get install libev-dev libssl-dev automake python3-docutils flex bison pkg-config make -y
+cd hitch-1.8.0
+./configure;make;sudo make install
+</code></pre>
+<p>Create Hitch Config "/etc/hitch/hitch.conf" as below:</p>
+<pre class="notranslate"><code class="notranslate">frontend = {
+    host = "*"
+    port = "8443"
+}
+backend = "[127.0.0.1]:3128"    # 6086 is the default Varnish PROXY port.
+workers = 4                     # number of CPU cores
+
+daemon = off
+
+# We strongly recommend you create a separate non-privileged hitch
+# user and group
+user = "hitch"
+group = "hitch"
+
+# Enable to let clients negotiate HTTP/2 with ALPN. (default off)
+# alpn-protos = "h2, http/1.1"
+
+# run Varnish as backend over PROXY; varnishd -a :80 -a localhost:6086,PROXY ..
+# write-proxy-v2 = on               # Write PROXY header
+
+# Only support strong ciphers and TLSv1.2, TLSv1.3
+tls-protos = TLSv1.2 TLSv1.3
+ciphers = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:!aNULL:!eNULL:!EXPORT:!LOW:!MD5:!DES:!3DES:!RC2:!RC4:!PSK:!kDH"
+
+syslog = on
+log-level = 2
+
+# The path to the combined server certificate and its private key.
+pem-file = "/etc/hitch/cert/server.pem"
+</code></pre>
+<p>Create user "hitch":<br>
+sudo useradd -r -U -s /bin/false hitch</p>
+<h1>Test TLS</h1>
+<p>Create server certificate and private key:</p>
+<pre class="notranslate"><code class="notranslate">mkdir cert
+cd cert
+openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt -subj "/CN=yourdomain.com" -extensions SAN -config &lt;(cat /etc/ssl/openssl.cnf &lt;(printf "\n[SAN]\nsubjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com"))
+cat server.key server.crt &gt; server.pem
+sudo mkdir -p /etc/hitch/cert
+sudo cp server.pem /etc/hitch/cert/
+</code></pre>
+<p>Add domain name in "/etc/hosts":</p>
+<pre class="notranslate"><code class="notranslate">10.231.249.222 www.yourdomain.com
+</code></pre>
+<p>Add the Self-Signed Certificate to the Trust Store:</p>
+<pre class="notranslate"><code class="notranslate">sudo cp server.crt /usr/local/share/ca-certificates/my-self-signed.crt
+sudo update-ca-certificates
+</code></pre>
+<p>Run Hitch:</p>
+<pre class="notranslate"><code class="notranslate">/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+</code></pre>
+<p>Test with curl:</p>
+<pre class="notranslate"><code class="notranslate">curl -x https://www.yourdomain.com:8443 https://myip.ipip.net
+</code></pre>
+<h1>Test MTLS</h1>
+<p>Create the "client.ext" file with the following content:</p>
+<pre class="notranslate"><code class="notranslate"># client.ext
+basicConstraints=CA:FALSE
+nsCertType=client
+nsComment="OpenSSL Generated Client Certificate"
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer:always
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=clientAuth
+</code></pre>
+<p>Create client certificate and private key:</p>
+<pre class="notranslate"><code class="notranslate">openssl genrsa -out ca.key 2048
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt
+
+sudo cp ca.crt /etc/hitch/cert/
+</code></pre>
+<p>Now add the following content in "/etc/hitch/hitch.conf" to enable MTLS on Hitch</p>
+<pre class="notranslate"><code class="notranslate"># This forces clients to present a valid client certificate.
+client-verify = required
+
+# Client certificate authority file used to verify client certificates for mTLS.
+client-verify-ca = "/etc/hitch/cert/ca.crt"
+</code></pre>
+<p>Now run Hitch</p>
+<pre class="notranslate"><code class="notranslate">/usr/local/sbin/hitch --test --config /etc/hitch/hitch.conf # validate conf first
+/usr/local/sbin/hitch --user hitch --group hitch --config /etc/hitch/hitch.conf --daemon
+</code></pre>
+<p>Verify MTLS setup with curl</p>
+<pre class="notranslate"><code class="notranslate">      MTLS           TLS           TLS
+curl -------&gt; Hitch ------&gt; Squid -----&gt; Dst
+</code></pre>
+<pre class="notranslate"><code class="notranslate">curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443  https://myip.ipip.net
+</code></pre>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Should be noticed that currently only tls3 can be used in this case, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1979580294" data-permission-text="Title is private" data-url="https://github.com/curl/curl/issues/12286" data-hovercard-type="issue" data-hovercard-url="/curl/curl/issues/12286/hovercard" href="https://github.com/curl/curl/issues/12286">curl/curl#12286</a>, so it's hard to verify from wireshark, since all certificate exchanges are encrypted after the TLS handshake. But we have Hitch configured to require MTLS, so if it succeeds, it should be using MTLS.</p>
+</div>
+<h1>Enable Proxy Protocol</h1>
+<p>The PROXY protocol was designed to help carry connection information from the source requesting side through a proxy server to the destination, especially when network address translation (NAT) is involved. It provides a way to preserve the original end-user IP addresses and TCP/UDP port numbers when traffic is routed through proxies and load balancers. The information is typically added to the header of the request forwarded to the destination server.</p>
+<p>There are two versions of the PROXY protocol: V1 and V2.</p>
+<ul>
+<li>V1 is human-readable ASCII, V2 is binary.</li>
+<li>V1 headers are simpler but more verbose, V2 headers are more flexible and can carry additional information using TLV (Type-Length-Value) vectors..</li>
+<li>V2 can support protocols other than TCP, e.g., UDP.<br>
+It needs to be enabled at both Squid and Hitch.<br>
+Add the following in "/etc/hitch/hitch.conf":</li>
+</ul>
+<pre class="notranslate"><code class="notranslate">proxy-proxy = on
+</code></pre>
+<p>Change "http_port 3128" in "/etc/squid/squid.conf":</p>
+<pre class="notranslate"><code class="notranslate">http_port 3128 require-proxy-header
+proxy_protocol_access allow localnet
+
+# following one is needed when testing on the same machine
+acl localnet src 127.0.0.1
+</code></pre>
+<p>Verify MTLS setup with curl</p>
+<pre class="notranslate"><code class="notranslate">curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443 --haproxy-protocol https://myip.ipip.net
+</code></pre>
+<h1>Cert and Key</h1>
+<p>Here's the step-by-step process for creating a set of certificates to be used for MTLS, including the CA certificate and key, server certificate and key, and client certificate and key. Please replace "Your CA Name", "yourdomain.com", and "Your Server Name" with your actual CA, domain, and server names.</p>
+<h2>Step 1: Generate the CA's Private Key</h2>
+<pre class="notranslate"><code class="notranslate">openssl genrsa -out ca.key 4096
+</code></pre>
+<p>This creates a new 4096-bit RSA private key for your CA. The key will be stored in ca.key.</p>
+<h2>Step 2: Generate the Self-Signed Root CA Certificate</h2>
+<pre class="notranslate"><code class="notranslate">openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -subj "/CN=Your CA Name"
+</code></pre>
+<p>This command generates a new self-signed CA certificate based on the private key (ca.key) you created. The -days 3650 makes the certificate valid for 10 years. The certificate will be stored in ca.crt.</p>
+<h2>Step 3: Generate the Server's Private Key</h2>
+<pre class="notranslate"><code class="notranslate">openssl genrsa -out server.key 2048
+</code></pre>
+<p>Generate a new 2048-bit RSA private key for your server. The key will be stored in server.key.</p>
+<h2>Step 4: Create a Certificate Signing Request (CSR) for the Server</h2>
+<pre class="notranslate"><code class="notranslate">openssl req -new -key server.key -out server.csr -subj "/CN=www.yourdomain.com"
+</code></pre>
+<p>This creates a new CSR (server.csr) for your server certificate using the server's private key (server.key).</p>
+<h2>Step 5: Generate the Server Certificate Signed by Your CA</h2>
+<pre class="notranslate"><code class="notranslate">openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
+</code></pre>
+<p>This signs the server CSR with your CA key, resulting in a signed server certificate (server.crt) valid for 1 year.</p>
+<h2>Step 6: Generate the Client's Private Key</h2>
+<pre class="notranslate"><code class="notranslate">openssl genrsa -out client.key 2048
+</code></pre>
+<p>Generate a new 2048-bit RSA private key for the client. This key will be stored in client.key.</p>
+<h2>Step 7: Create a CSR for the Client</h2>
+<pre class="notranslate"><code class="notranslate">openssl req -new -key client.key -out client.csr -subj "/CN=Your Client Name"
+</code></pre>
+<p>Create a CSR (client.csr) for the client using the newly created client key (client.key).</p>
+<h2>Step 8: Generate the Client Certificate Signed by Your CA</h2>
+<pre class="notranslate"><code class="notranslate">openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt
+</code></pre>
+<p>This signs the client CSR with your CA key, creating a signed client certificate (client.crt) valid for 1 year. This certificate is to be used for mutual TLS authentication by the client.</p>
+<h2>Step 9 (optional): Verify the Certificates</h2>
+<p>To verify the server and client certificates were signed by your CA:</p>
+<pre class="notranslate"><code class="notranslate">openssl verify -CAfile ca.crt server.crt
+openssl verify -CAfile ca.crt client.crt
+</code></pre>
+<p>Both commands should return OK if everything went well.</p>
+<p>Now you have:</p>
+<ul>
+<li>CA certificate (ca.crt) installed and trusted on the server and clients.</li>
+<li>Server certificate (server.crt) and private key (server.key) are installed on the server.</li>
+<li>Client certificate (client.crt) and private key (client.key) are installed on the client.</li>
+</ul>
+<p>Make sure you protect your private keys (ca.key, server.key, client.key) by setting appropriate file permissions. Using these instructions, your server and client can mutually authenticate themselves over a TLS connection, with your own CA acting as the trust anchor.<br>
+This content is only supported in a Feishu Docs</p>
+<p>Reference<br>
+<a href="https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt" rel="nofollow">https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt</a><br>
+<a href="https://seriousben.com/posts/2020-02-exploring-the-proxy-protocol/" rel="nofollow">https://seriousben.com/posts/2020-02-exploring-the-proxy-protocol/</a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://jiantaofu.github.io">The Curious Path</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","JiantaoFu/jiantaofu.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
+
+</html>
