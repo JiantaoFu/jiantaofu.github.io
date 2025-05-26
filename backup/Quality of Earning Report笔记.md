@@ -77,3 +77,33 @@ QoE 评估盈利的质量: QoE 分析师会深入研究 GAAP 报告、EBITDA 和
 - 调整 EBITDA: 评估 EBITDA 的计算，判断调整是否合理。
 - 分析现金流: 关注经营活动产生的现金流，验证 EBITDA 的真实性。
 - 发现潜在风险: 识别可能影响公司未来盈利能力的风险。
+
+# QofE
+
+QofE关注下面几个基于CAAP的调整
+
+1 Discretionary expenses
+2 Unusual and nonrecurring items of revenue and expense
+3 Timing / accounting policy adjustments
+4 Major customer wins and losses
+5 M&A run rate adjustments
+
+## Discretionary expenses
+
+
+
+| Adjusted for Discretionary Expenses | Reported | Discretionary Expenses | Adjusted | Explanation |
+|-------------------------------------|----------|-----------------------|----------|-------------------------------------------------------------------------------------------------|
+| Net revenue | $249,253 | $0 | $249,253 |No adjustments made; reflects total revenue generated. |
+| &emsp;Cost of goods sold | 129,972 | $0 | 129,972 |No adjustments made; reflects total cost of goods sold. |
+| Gross profit | 119,281 | $0 | 119,281 | No adjustments made; calculated as net revenue minus cost of goods sold. |
+| &emsp;&emsp;Selling expenses | 34,222 | (1,500) | 32,722 | Adjusted by removing $1,500 in discretionary expenses related to non-essential personnel. |
+| &emsp;&emsp;Research & development expenses | 2,733 | $0 | 2,733 | No adjustments made; reflects total R&D expenses incurred. |
+| &emsp;&emsp;General & administrative expenses | 62,582 | $0 | 62,582 |No adjustments made; reflects total G&A expenses incurred. |
+| &emsp;Operating expenses | 99,538 | (1,500) | 98,038 | Adjusted by removing discretionary expenses, leading to a more accurate operating cost. |
+| Operating income / EBIT | 19,744 | $1,500 | 21,244 | Increased due to adjustments for discretionary expenses, reflecting true earning power. |
+| &emsp;Depreciation | 5,132 | $0 | 5,132 |No adjustments made; reflects total depreciation expense. |
+| &emsp;Amortization | 1,094 | $0 | 1,094 | No adjustments made; reflects total amortization expense. |
+| EBITDA | 25,970 | $1,500 | 27,470 | Increased due to adjustments for discretionary expenses, indicating improved earning capacity. |
+| &emsp;EBITDA margin | 10.4% | nm | 11.0% | Improved margin reflects the impact of adjustments on EBITDA relative to net revenue. |
+
