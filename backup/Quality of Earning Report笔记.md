@@ -110,6 +110,14 @@ QofE关注下面几个基于CAAP的调整
 
 ## Unusual and Nonrecurring Items of Revenue and Expense
 
+“非正常和非经常性收入与费用”指的是那些不属于公司日常经营活动的收入和支出。这些项目通常是偶发性的，不会在公司的正常运营中频繁出现。
+
+- **非正常项目**：这些可能包括一次性出售资产、法律赔偿或其他特殊事件带来的收益或损失。例如，公司卖掉一块土地获得的利润，或者因为诉讼支付的罚款。
+
+- **非经常性项目**：这类项通常不会定期发生，比如某个季度由于特定原因（如自然灾害）导致的大额支出，或者因重组而产生的一次性费用。
+
+总之，这些收入和费用并不能反映公司的持续盈利能力，因此在进行财务分析时，需要将它们从净利润中剔除，以更准确地评估公司的实际经营表现。
+
 |  | Adjusted for Discretionary Expenses | Unusual or Nonrecurring  Items | Adjusted for Unusual or  Nonrecurring  |Explanation |
 |----|----|----|----|-----------------------------------------------------------------------------|
 | Net revenue  | \$249,253 |\$0 | \$249,253 |Total revenue remains unchanged as it reflects ongoing business operations. |
@@ -125,4 +133,28 @@ QofE关注下面几个基于CAAP的调整
 | EBITDA | \$27,470 | \$10,000 | \$37,470 |Adjusted EBITDA reflects enhanced earning power after adjustments. |
 |  &emsp;EBITDA margin | 11.0% | nm | 15.0% |Improved margin indicates better profitability post-adjustments. |
 
+## Timing / Accounting Policy Adjustments
 
+LIFO（后进先出）和FIFO（先进先出）是两种不同的库存计价方法。
+
+- **LIFO** 假设最近购买的商品最先被售出。这意味着在价格上涨时，销售成本会反映较高的新库存成本，而旧的、便宜的库存则留在资产负债表上。因此，这可能导致报告利润较低，因为费用看起来更高。
+
+- **FIFO** 则假设最早购买的商品最先被售出。在价格上涨时，这种方法使用的是旧货物和便宜成本来计算销售成本，因此与当前收入相比，费用显得较低。结果，在通货膨胀时期，与LIFO相比，利润可能看起来更高。
+
+用玩具举例：如果你今天以高价买了一个玩具，但按照FIFO的方法记录为之前以低价买过的一件，那么这就会让人觉得你的支出比实际支付少，从而影响盈利表现！
+
+
+|  | Adjusted for Unusual or Nonrecurring | Accounting Policy / Timing | Adjusted for Acctg Policy / Timing |Explanation |
+|----|----|----|----|-----------------------------------------------------------------------------|
+| Net revenue | \$249,253 | \$0 | \$249,253 | Total revenue generated from sales before any adjustments |
+| &emsp; Cost of goods sold | 119,972 | 1,236 | 121,208 |Direct costs attributable to the production of goods sold by the company. The adjustment reflects unusual expenses related to inventory accounting methods|
+| Gross profit | \$129,281 | (\$1,236) | \$128,045 | Revenue remaining after deducting COGS; indicates profitability from core operations before other expenses are considered.|
+| &emsp;&emsp;Selling expenses | 32,722 | 0 | 32,722 | Costs associated with selling products and services such as marketing and sales staff salaries.| 
+| &emsp;&emsp;Research & development expenses | 2,733 | 0 | 2,733 |Expenses incurred in developing new products or improving existing ones.| 
+| &emsp;&emsp;General & administrative expenses | 62,582 | 0 | 62,582 |General overhead costs not directly tied to production or sales activities.|
+| &emsp; Operating expenses | 98,038 | 0 | 98,038 |Total operating costs including selling and G&A that are necessary for running day-to-day business operations.|
+| Operating income/EBIT | \$31,244 | (\$1,236) | \$30,008 |Earnings before interest and taxes indicate operational efficiency after covering all operating expenditures.|
+| &emsp;Depreciation | 5,132 | 0 | 5,132 |Non-cash expense reflecting wear-and-tear on fixed assets over time.|
+| &emsp;Amortization | 1,094 | 0 | 1,094 |Non-cash expense representing gradual write-off of intangible assets like patents over their useful life|
+| EBITDA | \$37,470 | (\$1,236) | \$36,234 |Earnings Before Interest Taxes Depreciation Amortization shows a company's overall financial performance excluding non-operating factors|
+| &emsp;EBITDAmargin | 15.0% | nm | 14.5% |Percentage measure indicating EBITDA relative to total revenues showing operational profitability.|
