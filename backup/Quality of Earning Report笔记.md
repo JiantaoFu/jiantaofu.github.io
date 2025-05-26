@@ -90,7 +90,7 @@ QofE关注下面几个基于CAAP的调整
 
 ## Discretionary expenses
 
-
+在“可自由支配费用”部分，讨论了私人企业主有时将商业和个人费用混合的情况。这些费用可能与业主的生活方式有关，如汽车、飞机和度假物业等，可能会影响企业的历史收益。质量收益报告应识别并记录这些费用，以便更准确地反映企业的真实盈利能力。例如，某家族企业的名义销售经理并未实际工作，去除其薪酬后，能够更清晰地展示企业的盈利潜力。
 
 | Adjusted for Discretionary Expenses | Reported | Discretionary Expenses | Adjusted | Explanation |
 |-------------------------------------|----------|-----------------------|----------|-------------------------------------------------------------------------------------------------|
@@ -106,4 +106,23 @@ QofE关注下面几个基于CAAP的调整
 | &emsp;Amortization | 1,094 | $0 | 1,094 | No adjustments made; reflects total amortization expense. |
 | EBITDA | 25,970 | $1,500 | 27,470 | Increased due to adjustments for discretionary expenses, indicating improved earning capacity. |
 | &emsp;EBITDA margin | 10.4% | nm | 11.0% | Improved margin reflects the impact of adjustments on EBITDA relative to net revenue. |
+
+
+## Unusual and Nonrecurring Items of Revenue and Expense
+
+|  | Adjusted for Discretionary Expenses | Unusual or Nonrecurring  Items | Adjusted for Unusual or  Nonrecurring  |Explanation |
+|----|----|----|----|-----------------------------------------------------------------------------|
+| Net revenue  | \$249,253 |\$0 | \$249,253 |Total revenue remains unchanged as it reflects ongoing business operations. |
+|  &emsp;Cost of goods sold | 129,972 | (10,000) | 119,972 |Removal of a nonrecurring inventory write-off enhances gross profit. |
+| Gross profit | \$119,281 | \$10,000 | \$129,281 | Adjusted gross profit reflects true earning potential without distortions. |
+|  &emsp; &emsp;Selling expenses | 32,722 | 0 | 32,722 |Selling expenses remain unchanged, indicating stable operational costs. |
+|  &emsp; &emsp;Research& development expenses | 2,733 | 0 | 2,733 | R&D expenses are consistent, reflecting ongoing investment in innovation. |
+|  &emsp; &emsp;General & administrative expenses | 62,582 | 0 | 62,582 | G&A expenses are stable, indicating effective management of overhead costs. |
+|  &emsp;Operating expenses | 98,038 | 0 | 98,038 | Total operating expenses remain unchanged, reflecting operational efficiency. |
+| Operating income/EBIT | \$21,244 | \$10,000 | \$31,244 |Adjusted EBIT shows improved profitability after removing nonrecurring items.|
+|  &emsp;Depreciation | 5,132 | 0 | 5,132 |Depreciation remains unchanged, reflecting consistent asset usage. |
+|  &emsp;Amortization | 1,094 | 0 | 1,094 |Amortization remains stable, indicating no changes in intangible assets. |
+| EBITDA | \$27,470 | \$10,000 | \$37,470 |Adjusted EBITDA reflects enhanced earning power after adjustments. |
+|  &emsp;EBITDA margin | 11.0% | nm | 15.0% |Improved margin indicates better profitability post-adjustments. |
+
 
