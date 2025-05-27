@@ -158,3 +158,21 @@ LIFO（后进先出）和FIFO（先进先出）是两种不同的库存计价方
 | &emsp;Amortization | 1,094 | 0 | 1,094 |Non-cash expense representing gradual write-off of intangible assets like patents over their useful life|
 | EBITDA | \$37,470 | (\$1,236) | \$36,234 |Earnings Before Interest Taxes Depreciation Amortization shows a company's overall financial performance excluding non-operating factors|
 | &emsp;EBITDAmargin | 15.0% | nm | 14.5% |Percentage measure indicating EBITDA relative to total revenues showing operational profitability.|
+
+## Major customer wins and losses
+
+|  | Customer Count | Revenue | Customer Average |Explanation |
+|----|----|----|----|-----------------------------------------------------------------------------|
+| Prior Year Total | 673 | \$225,634 | \$335 |This represents the total number of customers and revenue in the prior year. The average revenue per customer is calculated by dividing total revenue by customer count. |
+| &emsp;less: Lost customers | \(72\) | (7,436) | 103 |This shows the number of customers lost from the prior year and the corresponding revenue lost.|
+| &emsp;plus:Retained customers (increase) | 488 | 15,992 | 33 |  These are retained customers who increased their spending compared to last year, contributing positively to overall growth with an aggregate increase of $15,992 in revenue from these accounts.|
+| &emsp;less:Retained customers (decrease) | 113 | (3,167) | \(28\) |These are retained accounts that decreased their spending compared to last year resulting in a loss of $3,167 in total revenues.|
+| &emsp;plus: New customers | 180 | 18,230 | 101 |Newly acquired clients added during this period contributed significantly but had lower average revenues than existing ones due to being new entrants into the company's portfolio.|
+| Current Year Total | 781 | \$249,253 | \$319 |This reflects all active customer counts and associated revenues for the current fiscal period after accounting for losses and gains throughout.|
+| &emsp;Lost customers / beginning total | -10.7% | -3.3% | |This percentage indicates how much lost business impacted both customer count and overall sales relative to previous totals. |
+| &emsp;Revenue growth (increasing retained) |  | 9.4% | | The positive change shows that most returning clients spent more money on products or services this past year as opposed to before. The 9.4% requires inferring prior-year revenue for the specific subset of retained customers (not visible in the table). Prior-year revenue for these 488 customers = $15,992 (increase) / 9.4% ≈ $170,127.|  
+| &emsp;Revenue growth (decreasing retained) |  | -6.6% | | Indicates a decline caused primarily by those few remaining client relationships which saw reduced purchases over time despite some increases elsewhere within other segments . The overall prior-year average ($335) includes all customers (including those who left or increased spending). Lost customers had a much lower prior-year average ($103), dragging down the overall average. Retained customers who decreased spending likely had higher-than-average prior-year spending ($424.78 vs. $335) ($3167/0.066/113=424.78).|
+| &emsp;Y/Y change (excluding new customers) | -10.7% | 2.4% | 14.7% |This row shows the year-over-year change without the impact of new customers. `(249253-225634)/(781-180)=384.40`, `14.7%=(384.40 - 335)/335` |
+| &emsp;Net Y/Y change | 16.0% | 10.5% | -4.8% |This shows the overall net year-over-year change including new customers. `249253/781=319.15`, `-4.8% = (319.15-335)/335`|
+
+
