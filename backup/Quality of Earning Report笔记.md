@@ -1,3 +1,7 @@
+# Abbr
+
+M&A - Mergers and Acquisitions
+
 GAAP - Generally Accepted Accounting Principles, 是指一套在美国使用的会计原则、标准和惯例。它是由财务会计准则委员会（FASB）制定，并经美国证券交易委员会（SEC）认可的一系列规则。GAAP 的核心目标是确保企业在编制财务报告时采用一致的方法。这样，不同公司之间的财务报表才能具有可比性，投资者和债权人可以更轻松地评估和比较它们的财务状况。
 
 EBITDA - Earnings Before Interest, Taxes, Depreciation, and Amortization，中文译为“息税折旧摊销前利润”。它是一种衡量公司盈利能力的指标，通过从公司的净利润中加回利息支出、所得税费用、折旧费用和摊销费用来计算得出。EBITDA剔除了利息、税收、折旧和摊销等非经营性因素的影响，更专注于评估公司在主营业务上的盈利能力。这使得EBITDA在不同国家、不同税收政策和不同资本结构的公司之间具有更好的可比性。
@@ -161,6 +165,8 @@ LIFO（后进先出）和FIFO（先进先出）是两种不同的库存计价方
 
 ## Major customer wins and losses
 
+企业在客户基础上可能会经历的“流失”现象，特别是对于那些客户集中度较高的企业来说，增加或失去重要客户可能需要在质量收益分析（QofE）中进行调整。为了支持这些调整，QofE报告应包括对历史客户流失情况的详细分析。这种分析可以通过总结顾客数量和收入变化来呈现，从而帮助理解业务表现是否需要做出改变以保持良好发展。
+
 |  | Customer Count | Revenue | Customer Average |Explanation |
 |----|----|----|----|-----------------------------------------------------------------------------|
 | Prior Year Total | 673 | \$225,634 | \$335 |This represents the total number of customers and revenue in the prior year. The average revenue per customer is calculated by dividing total revenue by customer count. |
@@ -175,4 +181,22 @@ LIFO（后进先出）和FIFO（先进先出）是两种不同的库存计价方
 | &emsp;Y/Y change (excluding new customers) | -10.7% | 2.4% | 14.7% |This row shows the year-over-year change without the impact of new customers. `(249253-225634)/(781-180)=384.40`, `14.7%=(384.40 - 335)/335` |
 | &emsp;Net Y/Y change | 16.0% | 10.5% | -4.8% |This shows the overall net year-over-year change including new customers. `249253/781=319.15`, `-4.8% = (319.15-335)/335`|
 
+## M&A run rate adjustments
 
+当公司进行收购时，财务报表中只会从收购完成日开始计算被收购公司的业绩；同样地，如果公司出售部分业务，则在出售日期之前的业绩才会被计入。因此，在收购或出售发生的年份，其财务报告可能无法真实反映整个业务的运营状况。
+
+
+|  | Adjusted for Acctg Policy / Timing | Pre-Closing Earnings of Acquiree | Pro Forma Run Rate Earnings |Explanation |
+|----|----|----|----|-----------------------------------------------------------------------------|
+| Net revenue | \$249,253 | \$39,724 | \$288,977 |The total revenue generated from sales, reflecting the income from business activities.|
+| &emsp; Cost of goods sold | 121,208 | 16,679 | 137,887 |The direct costs attributable to the production of the goods sold by a company. This includes materials and direct labor costs.|
+| Gross profit | \$128,045 | \$23,045 | \$151,090 | Revenue minus COGS. It indicates the profitability after accounting for the direct costs of production.|
+| &emsp;&emsp;Selling expenses | 32,722 | 7,428 | 40,150 |Costs related to selling the company's products or services, such as marketing and sales salaries.|
+| &emsp;&emsp;Research & development expenses | 2,733 | 0 | 2,733 |Costs associated with the company's research and development efforts.|
+| &emsp;&emsp;General & administrative expenses | 62,582 | 8,964 | 71,546 |Costs related to the overall operation of a business, such as administrative salaries and office expenses.|
+| &emsp;Operating expenses | 98,038 | 16,392 | 114,430 |The sum of selling, R&D, and G&A expenses. These are costs incurred in the ordinary course of business.|
+| Operating income/EBIT | \$30,008 | \$6,653 | \$36,661 | Profit after deducting operating expenses from gross profit. It measures the company's operating efficiency.|
+| &emsp; Depreciation | 5,132 | 622 | 5,754 |The accounting method of allocating the cost of tangible assets over their useful life.|
+| &emsp; Amortization | 1,094 | 0 | 1,094 |The accounting method of allocating the cost of intangible assets over their useful life.|
+| EBITDA | \$36,234 | \$7,275 | \$43,509 |A measure of a company's operating performance. It's EBIT plus depreciation and amortization.|
+| &emsp; EBITDAmargin | 14.5% | 18.3% | 15.1% | EBITDA as a percentage of net revenue, indicating the company's operational efficiency.|
