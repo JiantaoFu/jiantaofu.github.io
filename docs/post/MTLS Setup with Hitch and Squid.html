@@ -791,7 +791,7 @@ curl -------&gt; Hitch ------&gt; Squid -----&gt; Dst
 </code></pre>
 <pre class="notranslate"><code class="notranslate">curl --cacert ca.crt --proxy-cert client.crt --proxy-key client.key -x https://www.yourdomain.com:8443  https://myip.ipip.net
 </code></pre>
-<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Should be noticed that currently only tls3 can be used in this case, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1979580294" data-permission-text="Title is private" data-url="https://github.com/curl/curl/issues/12286" data-hovercard-type="issue" data-hovercard-url="/curl/curl/issues/12286/hovercard" href="https://github.com/curl/curl/issues/12286">curl/curl#12286</a>, so it's hard to verify from wireshark, since all certificate exchanges are encrypted after the TLS handshake. But we have Hitch configured to require MTLS, so if it succeeds, it should be using MTLS.</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Should be noticed that currently only tls3 can be used in this case, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1979580294" data-permission-text="Title is private" data-url="https://github.com/curl/curl/issues/12286" data-hovercard-type="issue" data-hovercard-url="/curl/curl/issues/12286/hovercard" href="https://github.com/curl/curl/issues/12286">curl/curl#12286</a>, so it's hard to verify from wireshark, since all certificate exchanges are encrypted after the TLS handshake. But we have Hitch configured to require MTLS, so if it succeeds, it should be using MTLS.</p>
 </div>
 <h1>Enable Proxy Protocol</h1>
 <p>The PROXY protocol was designed to help carry connection information from the source requesting side through a proxy server to the destination, especially when network address translation (NAT) is involved. It provides a way to preserve the original end-user IP addresses and TCP/UDP port numbers when traffic is routed through proxies and load balancers. The information is typically added to the header of the request forwarded to the destination server.</p>
@@ -885,7 +885,7 @@ if(""!=""){
     var startSite=new Date("");
     var diff=now.getTime()-startSite.getTime();
     var diffDay=Math.floor(diff/(1000*60*60*24));
-    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
 }
 </script></div>
 </body>
@@ -930,6 +930,7 @@ document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
 function openComments(){
     cm=document.getElementById("comments");
     cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
     cmButton.innerHTML="loading";
     span=document.createElement("span");
     span.setAttribute("class","AnimatedEllipsis");
